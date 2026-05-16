@@ -32,11 +32,11 @@ class LandschaftGenerator:
             return nachbarn
         else:
             nachbarn.append(spielLandschaft.zeilen[zeile].spalten[spalte + 1])
-        if zeile > 0:
-            #oberer Nachbar
+        if zeile > 0 and (spielLandschaft.zeilen[zeile - 1].spalten[spalte].landschaftstyp != weg_typ):
+            #oberer Nachbar nur wenn noch kein weg dort
             if (spalte == 0) or (spielLandschaft.zeilen[zeile - 1].spalten[spalte-1].landschaftstyp != weg_typ):
                 nachbarn.append(spielLandschaft.zeilen[zeile - 1].spalten[spalte])
-        if zeile < (spielLandschaft.anzahl_zeilen - 1):
+        if zeile < (spielLandschaft.anzahl_zeilen - 1) and (spielLandschaft.zeilen[zeile + 1].spalten[spalte].landschaftstyp != weg_typ):
             #unterer Nachbar
             if (spalte == 0) or (spielLandschaft.zeilen[zeile + 1].spalten[spalte-1].landschaftstyp != weg_typ):
                 nachbarn.append(spielLandschaft.zeilen[zeile + 1].spalten[spalte])
