@@ -5,6 +5,7 @@ import pyglet
 @dataclass
 class Landschaftstyp:
     name: str = None
+    is_random: bool = False
     image: pyglet.image.Texture | pyglet.image.TextureRegion = None
 
 @dataclass

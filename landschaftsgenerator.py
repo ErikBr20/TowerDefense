@@ -7,7 +7,8 @@ from spiel_lelements import SpielLandschaft, RasterFeld, Landschaftstyp, SpielZe
 class LandschaftGenerator:
     
     def auswahl_random(self, typen: List[Landschaftstyp]) -> Landschaftstyp:
-        selected = random.choice(typen)
+        random_typen = filter(lambda x: x.is_random is True, typen)
+        selected = random.choice(list(random_typen))
         return selected
 
     def make_spiel_landschaft(self, zeilen: int, spalten: int, typen: List[Landschaftstyp]) -> SpielLandschaft:
