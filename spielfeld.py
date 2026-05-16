@@ -12,6 +12,7 @@ def initialisiere_spiel(spalten: int, zeilen: int, res: Ressources, dritter_spie
     spiel.landschaftstypen.append(make_landschaftstyp("Turm", False, res.images.turm))
     spiel.landschaftstypen.append(make_landschaftstyp("Gras", True, res.images.gras))
     spiel.landschaftstypen.append(make_landschaftstyp("Weg", False, res.images.weg))
+    spiel.landschaftstypen.append(make_landschaftstyp("Goldturm", False, res.images.goldturm))
 
     
     spielBatch = pyglet.graphics.Batch()

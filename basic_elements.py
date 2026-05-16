@@ -76,7 +76,8 @@ def load_static_ressources():
         "gras": "gras.png",
         "schuetze": "schuetze.png",
         "turm": "turm.png",
-        "weg": "weg.png"
+        "weg": "weg.png",
+        "goldturm": "goldturm.png"
     }
 
     # Load each image dynamically

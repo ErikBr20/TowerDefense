@@ -16,7 +16,7 @@ class LandschaftGenerator:
         start_spalte = 0
         spielLandschaft.zeilen[start_zeile].spalten[start_spalte].landschaftstyp = weg_typ
         while True: 
-            nachbarn = self.bestimme_weg_nachbarn(spielLandschaft, start_zeile, start_spalte, weg_typ)
+            nachbarn = self.bestimme_weg_zielfelder(spielLandschaft, start_zeile, start_spalte, weg_typ)
             if len(nachbarn) == 0:
                 return
             else:
@@ -25,8 +25,7 @@ class LandschaftGenerator:
                 start_zeile = weg_feld.index_y
                 start_spalte = weg_feld.index_x
 
-
-    def bestimme_weg_nachbarn(self, spielLandschaft: SpielLandschaft, zeile: int, spalte: int, weg_typ: Landschaftstyp) -> List[RasterFeld]:
+    def bestimme_weg_zielfelder(self, spielLandschaft: SpielLandschaft, zeile: int, spalte: int, weg_typ: Landschaftstyp) -> List[RasterFeld]:
         nachbarn = []
         if spalte == (spielLandschaft.anzahl_spalten - 1):
             return nachbarn
@@ -42,6 +41,31 @@ class LandschaftGenerator:
                 nachbarn.append(spielLandschaft.zeilen[zeile + 1].spalten[spalte])
         return nachbarn
     
+    def platziere_erde(self, spielLandschaft: SpielLandschaft, erde_typ: Landschaftstyp, weg_typ: Landschaftstyp) -> None:
+        for aktuelle_spalte in range(0, spielLandschaft.anzahl_spalten):
+            nachbarn = self.ermittle_wegnachbarn_in_spalte(spielLandschaft, aktuelle_spalte, weg_typ)
+            selected_nachbar = random.choice(nachbarn) 
+            selected_nachbar.landschaftstyp = erde_typ
+
+    def ermittle_wegnachbarn_in_spalte(self, spielLandschaft: SpielLandschaft, aktuelle_spalte: int, weg_typ: Landschaftstyp) -> List[RasterFeld]:
+        nachbarn = []
+        for aktuelle_zeile in range(0, spielLandschaft.anzahl_zeilen):
+            aktuelles_feld = (spielLandschaft.zeilen[aktuelle_zeile].spalten[aktuelle_spalte])
+            if aktuelles_feld.landschaftstyp == weg_typ:
+                if aktuelle_zeile > 0 and (spielLandschaft.zeilen[aktuelle_zeile - 1].spalten[aktuelle_spalte].landschaftstyp != weg_typ):
+                    nachbarn.append(spielLandschaft.zeilen[aktuelle_zeile - 1].spalten[aktuelle_spalte])
+                if aktuelle_zeile < spielLandschaft.anzahl_zeilen - 1 and (spielLandschaft.zeilen[aktuelle_zeile + 1].spalten[aktuelle_spalte].landschaftstyp != weg_typ):
+                    nachbarn.append(spielLandschaft.zeilen[aktuelle_zeile + 1].spalten[aktuelle_spalte])
+        return nachbarn
+    
+    def platziere_goldturm(self, spielLandschaft: SpielLandschaft, erde_typ: Landschaftstyp, goldturm_typ: Landschaftstyp) -> None:
+        letzte_spalte = spielLandschaft.anzahl_spalten - 1
+        for aktuelle_zeile in range(0, spielLandschaft.anzahl_zeilen):
+             aktuelles_feld = (spielLandschaft.zeilen[aktuelle_zeile].spalten[letzte_spalte])
+             if aktuelles_feld.landschaftstyp == erde_typ:
+                aktuelles_feld.landschaftstyp = goldturm_typ
+
+
     def make_spiel_landschaft(self, zeilen: int, spalten: int, typen: List[Landschaftstyp]) -> SpielLandschaft:
         spielLandschaft = SpielLandschaft()
         spielLandschaft.anzahl_spalten = spalten
@@ -57,4 +81,8 @@ class LandschaftGenerator:
                 spielzeile.spalten.append(rasterfeld)
         weg_typ = next(x for x in typen if x.name == "Weg")
         self.mache_weg(spielLandschaft, weg_typ)
+        erde_typ = next(x for x in typen if x.name == "Erde")
+        self.platziere_erde(spielLandschaft, erde_typ, weg_typ)
+        goldturm_typ = next(x for x in typen if x.name == "Goldturm")
+        self.platziere_goldturm(spielLandschaft, erde_typ, goldturm_typ)
         return spielLandschaft
