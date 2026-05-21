@@ -2,7 +2,7 @@ from dataclasses import dataclass
 from typing import List
 import random
 from spiel_lelements import SpielLandschaft, RasterFeld, Landschaftstyp, SpielZeile
-
+#landschaft generieren
 @dataclass
 class LandschaftGenerator:
     
