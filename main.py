@@ -22,14 +22,14 @@ end_press = False
 
 res = load_static_ressources()
 spiel: Spiel = None
-
+#game Starten
 def start_game(widget=None):
     global menu
     global spiel
     menu = None
     spiel = initialisiere_spiel(16, 11, res, False)
 
-
+#Menu machen
 add_menu_item(menu, 'Starte Spiel', res.images.button_frame, start_game)
 
 add_menu_item(menu, 'Exit', res.images.button_frame, exit_handler)
