@@ -77,10 +77,35 @@ def load_static_ressources():
         "schuetze": "schuetze.png",
         "turm": "turm.png",
         "weg": "weg.png",
-        "goldturm": "goldturm.png"
+        "goldturm": "goldturm.png",
+        "rittergeg1": "ritter_1.png",
+        "rittergeg2": "ritter_2.png",
+        "rittergeg3": "ritter_3.png",
+        "rittergeg4": "ritter_4.png",
+        "rittergeg5": "ritter_5.png", 
+        "rittergeg6": "ritter_6.png",
+        "rittergeg7": "ritter_7.png",
+        "rittergeg8": "ritter_8.png",
+        "rittergeg9": "ritter_9.png",
+        "rittergeg10": "ritter_10.png"
     }
 
     # Load each image dynamically
     for var_name, file_name in images_to_load.items():
         load_image(res, var_name, file_name)
+
+    images = [res.images.rittergeg2,
+          res.images.rittergeg1,
+          res.images.rittergeg3,
+          res.images.rittergeg4,
+          res.images.rittergeg10,
+          res.images.rittergeg5,
+          res.images.rittergeg9,
+          res.images.rittergeg7,
+          res.images.rittergeg6,
+          res.images.rittergeg8
+    ] 
+    rittergeg_ani = pyglet.image.Animation.from_image_sequence(images, duration=0.1, loop=True)
+    res.images.add_image("rittergeg_ani", rittergeg_ani)
+
     return res
