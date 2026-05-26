@@ -11,8 +11,8 @@ res = load_static_ressources()
 spielBatch = pyglet.graphics.Batch()
 sprite = make_image_sprite(0,0,300,300, res.images.rittergeg2, spielBatch)
 
-ani_sprite = make_image_sprite(300, 300, 300, 300, res.images.rittergeg_ani, spielBatch)
-
+ani_sprite = make_image_sprite(300, 300, 500, 500, res.images.rittergeg_ani, spielBatch)
+ani2_sprite = make_image_sprite(700, 300, 500, 500, res.images.ritterdef_ani, spielBatch) 
 
 @game_window.event
 def on_draw():

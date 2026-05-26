@@ -17,7 +17,7 @@ class NamedImages:
         """Allow dynamic attribute-style access to images."""
         if name in self.images:
             return self.images[name]
-        raise AttributeError(f"'NamedImages' object has no attribute '{name}'")
+        raise AttributeError("f'NamedImages' object has no attribute '{name}'")
 
 
 @dataclass
@@ -87,8 +87,18 @@ def load_static_ressources():
         "rittergeg7": "ritter_7.png",
         "rittergeg8": "ritter_8.png",
         "rittergeg9": "ritter_9.png",
-        "rittergeg10": "ritter_10.png"
-    }
+        "rittergeg10": "ritter_10.png",
+        "ritter_def1": "ritter_def1.png",
+        "ritter_def2": "ritter_def2.png",
+        "ritter_def3": "ritter_def3.png",
+        "ritter_def4": "ritter_def4.png",
+        "ritter_def5": "ritter_def5.png",
+        "ritter_def6": "ritter_def6.png",
+        "ritter_def7": "ritter_def7.png",
+        "ritter_def8": "ritter_def8.png",
+        "ritter_def9": "ritter_def9.png",
+        "ritter_def10": "ritter_def10.png"
+}
 
     # Load each image dynamically
     for var_name, file_name in images_to_load.items():
@@ -107,5 +117,24 @@ def load_static_ressources():
     ] 
     rittergeg_ani = pyglet.image.Animation.from_image_sequence(images, duration=0.1, loop=True)
     res.images.add_image("rittergeg_ani", rittergeg_ani)
+
+    
+
+    for var_name, file_name in images_to_load.items():
+        load_image(res, var_name, file_name)
+
+    images1 = [res.images.ritter_def10,
+          res.images.ritter_def7,
+          res.images.ritter_def4,
+          res.images.ritter_def1,
+          res.images.ritter_def3,
+          res.images.ritter_def9,
+          res.images.ritter_def5,
+          res.images.ritter_def6,
+          res.images.ritter_def8,
+          res.images.ritter_def9
+    ] 
+    ritterdef_ani = pyglet.image.Animation.from_image_sequence(images1, duration=0.1, loop=True)
+    res.images.add_image("ritterdef_ani", ritterdef_ani)
 
     return res
