@@ -88,16 +88,16 @@ def load_static_ressources():
         "rittergeg8": "ritter_8.png",
         "rittergeg9": "ritter_9.png",
         "rittergeg10": "ritter_10.png",
-        "ritter_def1": "ritter_def1.png",
-        "ritter_def2": "ritter_def2.png",
-        "ritter_def3": "ritter_def3.png",
-        "ritter_def4": "ritter_def4.png",
-        "ritter_def5": "ritter_def5.png",
-        "ritter_def6": "ritter_def6.png",
-        "ritter_def7": "ritter_def7.png",
-        "ritter_def8": "ritter_def8.png",
-        "ritter_def9": "ritter_def9.png",
-        "ritter_def10": "ritter_def10.png"
+        "ritter_def1": "ritterdef1.png",
+        "ritter_def2": "ritterdef2.png",
+        "ritter_def3": "ritterdef3.png",
+        "ritter_def4": "ritterdef4.png",
+        "ritter_def5": "ritterdef5.png",
+        "ritter_def6": "ritterdef6.png",
+        "ritter_def7": "ritterdef7.png",
+        "ritter_def8": "ritterdef8.png",
+        "ritter_def9": "ritterdef9.png",
+        "ritter_def10": "ritterdef10.png"
 }
 
     # Load each image dynamically
