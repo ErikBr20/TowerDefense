@@ -106,7 +106,6 @@ def load_static_ressources():
 
     images = [res.images.rittergeg2,
           res.images.rittergeg1,
-          res.images.rittergeg3,
           res.images.rittergeg4,
           res.images.rittergeg10,
           res.images.rittergeg5,
@@ -115,7 +114,13 @@ def load_static_ressources():
           res.images.rittergeg6,
           res.images.rittergeg8
     ] 
-    rittergeg_ani = pyglet.image.Animation.from_image_sequence(images, duration=0.1, loop=True)
+    cloned_images = []
+    for img in images:
+        clone = img.get_region(0, 0, img.width, img.height)
+        clone.anchor_x = clone.width // 2
+        clone.anchor_y = clone.height // 2
+        cloned_images.append(clone)
+    rittergeg_ani = pyglet.image.Animation.from_image_sequence(cloned_images, duration=0.1, loop=True)
     res.images.add_image("rittergeg_ani", rittergeg_ani)
 
     
@@ -123,18 +128,22 @@ def load_static_ressources():
     for var_name, file_name in images_to_load.items():
         load_image(res, var_name, file_name)
 
-    images1 = [res.images.ritter_def10,
+    images = [res.images.ritter_def10,
           res.images.ritter_def7,
           res.images.ritter_def4,
-          res.images.ritter_def1,
-          res.images.ritter_def3,
           res.images.ritter_def9,
           res.images.ritter_def5,
           res.images.ritter_def6,
           res.images.ritter_def8,
           res.images.ritter_def9
-    ] 
-    ritterdef_ani = pyglet.image.Animation.from_image_sequence(images1, duration=0.1, loop=True)
+    ]
+    cloned_images = []
+    for img in images:
+        clone = img.get_region(0, 0, img.width, img.height)
+        clone.anchor_x = clone.width // 2
+        clone.anchor_y = clone.height // 2
+        cloned_images.append(clone)
+    ritterdef_ani = pyglet.image.Animation.from_image_sequence(cloned_images, duration=0.1, loop=True)
     res.images.add_image("ritterdef_ani", ritterdef_ani)
 
     return res
