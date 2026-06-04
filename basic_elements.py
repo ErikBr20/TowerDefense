@@ -97,7 +97,14 @@ def load_static_ressources():
         "ritter_def7": "ritterdef7.png",
         "ritter_def8": "ritterdef8.png",
         "ritter_def9": "ritterdef9.png",
-        "ritter_def10": "ritterdef10.png"
+        "ritter_def10": "ritterdef10.png",
+        "könig1": "könig1.jpg",
+        "könig2": "könig2.jpg",
+        "könig4": "könig4.jpg",
+        "könig5": "könig5.png",
+        "könig8": "könig8.jpg",
+        "könig9": "könig9.jpg"
+                
 }
 
     # Load each image dynamically
@@ -145,5 +152,29 @@ def load_static_ressources():
         cloned_images.append(clone)
     ritterdef_ani = pyglet.image.Animation.from_image_sequence(cloned_images, duration=0.1, loop=True)
     res.images.add_image("ritterdef_ani", ritterdef_ani)
+
+    for var_name, file_name in images_to_load.items():
+        load_image(res, var_name, file_name)
+
+    images = [res.images.könig4,
+            res.images.könig8,
+            res.images.könig2,
+            res.images.könig9,
+            res.images.könig5,
+            res.images.könig1,
+            res.images.könig9,
+            res.images.könig2,
+            res.images.könig9,
+            res.images.könig5
+    ]          
+          
+    cloned_images = []
+    for img in images:
+        clone = img.get_region(0, 0, img.width, img.height)
+        clone.anchor_x = clone.width // 2
+        clone.anchor_y = clone.height // 2
+        cloned_images.append(clone)
+    könig_ani = pyglet.image.Animation.from_image_sequence(cloned_images, duration=0.1, loop=True)
+    res.images.add_image("könig_ani", könig_ani)
 
     return res
