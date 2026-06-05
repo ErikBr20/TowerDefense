@@ -34,7 +34,7 @@ add_menu_item(menu, 'Starte Spiel', res.images.button_frame, start_game)
 
 add_menu_item(menu, 'Exit', res.images.button_frame, exit_handler)
 
-
+#mouse drücken
 @game_window.event
 def on_mouse_press(x, y, button, modifiers):
     global end_press
@@ -57,7 +57,7 @@ def on_mouse_press(x, y, button, modifiers):
         if spielende:
             end_press = True
     return True
-
+#menu zeichnen
 @game_window.event
 def on_draw():
     game_window.clear()

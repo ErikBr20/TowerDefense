@@ -5,15 +5,15 @@ from spiel_lelements import SpielLandschaft, RasterFeld, Landschaftstyp, SpielZe
 #landschaft generieren
 @dataclass
 class LandschaftGenerator:
-    
     def auswahl_random(self, typen: List[Landschaftstyp]) -> Landschaftstyp:
         random_typen = filter(lambda x: x.is_random is True, typen)
         selected = random.choice(list(random_typen))
         return selected
-    
+    #weg zeichnen aus nachbaren
     def mache_weg(self, spielLandschaft: SpielLandschaft, weg_typ: Landschaftstyp) -> None:
         start_zeile = random.randint(0, spielLandschaft.anzahl_zeilen - 1)
         start_spalte = 0
+
         spielLandschaft.zeilen[start_zeile].spalten[start_spalte].landschaftstyp = weg_typ
         while True: 
             nachbarn = self.bestimme_weg_zielfelder(spielLandschaft, start_zeile, start_spalte, weg_typ)
@@ -25,6 +25,7 @@ class LandschaftGenerator:
                 start_zeile = weg_feld.index_y
                 start_spalte = weg_feld.index_x
 
+    #nachbaren bestimmen
     def bestimme_weg_zielfelder(self, spielLandschaft: SpielLandschaft, zeile: int, spalte: int, weg_typ: Landschaftstyp) -> List[RasterFeld]:
         nachbarn = []
         if spalte == (spielLandschaft.anzahl_spalten - 1):

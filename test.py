@@ -63,8 +63,8 @@ def rittergeg_drehen_rechts(x):
 
 @game_window.event
 def on_draw():
-    #ritterdef_nach_rechts(5)
-    #rittergeg_drehen_rechts(90)
+    ritterdef_nach_rechts(5)
+    rittergeg_drehen_rechts(90)
     game_window.clear()
     spielBatch.draw()
 
