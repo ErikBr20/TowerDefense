@@ -13,7 +13,7 @@ sprite = make_image_sprite(0,0,300,300, res.images.rittergeg2, spielBatch)
 
 ani_sprite = make_image_sprite(300, 300, 500, 500, res.images.rittergeg_ani, spielBatch)
 ani2_sprite = make_image_sprite(700, 300, 500, 500, res.images.ritterdef_ani, spielBatch)
-ani3_sprite = make_image_sprite(1100, 300, 500, 500, res.images.könig_ani, spielBatch)
+ani3_sprite = make_image_sprite(1100, 300, 500, 500, res.images.könig_ani, spielBatch) #animationen werden aufgerufen
 
 def rittergeg_nach_links(x):
     ani_sprite.x -= x
@@ -53,7 +53,8 @@ def rittergeg_drehen_rechts(x):
 
 def rittergeg_drehen_rechts(x):
      ani_sprite.rotation = -x
-
+     
+#verschiedene drehungen
      
 
 

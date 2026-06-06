@@ -8,11 +8,11 @@ class LandschaftGenerator:
     def auswahl_random(self, typen: List[Landschaftstyp]) -> Landschaftstyp:
         random_typen = filter(lambda x: x.is_random is True, typen)
         selected = random.choice(list(random_typen))
-        return selected
+        return selected #zufällige Landschaft machen
     #weg zeichnen aus nachbaren
     def mache_weg(self, spielLandschaft: SpielLandschaft, weg_typ: Landschaftstyp) -> None:
-        start_zeile = random.randint(0, spielLandschaft.anzahl_zeilen - 1)
-        start_spalte = 0
+        start_zeile = random.randint(0, spielLandschaft.anzahl_zeilen - 1) #zufällige zeile
+        start_spalte = 0 #anfangs Spalte ganz links
 
         spielLandschaft.zeilen[start_zeile].spalten[start_spalte].landschaftstyp = weg_typ
         while True: 
@@ -20,7 +20,7 @@ class LandschaftGenerator:
             if len(nachbarn) == 0:
                 return
             else:
-                weg_feld = random.choice(nachbarn)
+                weg_feld = random.choice(nachbarn) #zufällig aus nachbarn
                 weg_feld.landschaftstyp = weg_typ
                 start_zeile = weg_feld.index_y
                 start_spalte = weg_feld.index_x
@@ -33,19 +33,19 @@ class LandschaftGenerator:
         else:
             nachbarn.append(spielLandschaft.zeilen[zeile].spalten[spalte + 1])
         if zeile > 0 and (spielLandschaft.zeilen[zeile - 1].spalten[spalte].landschaftstyp != weg_typ):
-            #oberer Nachbar nur wenn noch kein weg dort
+            #schauen ob oben weg ist
             if (spalte == 0) or (spielLandschaft.zeilen[zeile - 1].spalten[spalte-1].landschaftstyp != weg_typ):
                 nachbarn.append(spielLandschaft.zeilen[zeile - 1].spalten[spalte])
         if zeile < (spielLandschaft.anzahl_zeilen - 1) and (spielLandschaft.zeilen[zeile + 1].spalten[spalte].landschaftstyp != weg_typ):
-            #unterer Nachbar
+            #schauen ob unten weg ist
             if (spalte == 0) or (spielLandschaft.zeilen[zeile + 1].spalten[spalte-1].landschaftstyp != weg_typ):
-                nachbarn.append(spielLandschaft.zeilen[zeile + 1].spalten[spalte])
+                nachbarn.append(spielLandschaft.zeilen[zeile + 1].spalten[spalte]) #schauen das kein feld gebildet wird
         return nachbarn
     
     def platziere_erde(self, spielLandschaft: SpielLandschaft, erde_typ: Landschaftstyp, weg_typ: Landschaftstyp) -> None:
         for aktuelle_spalte in range(0, spielLandschaft.anzahl_spalten):
             nachbarn = self.ermittle_wegnachbarn_in_spalte(spielLandschaft, aktuelle_spalte, weg_typ)
-            selected_nachbar = random.choice(nachbarn) 
+            selected_nachbar = random.choice(nachbarn) #zufällige erde auf weg nachbar
             selected_nachbar.landschaftstyp = erde_typ
 
     def ermittle_wegnachbarn_in_spalte(self, spielLandschaft: SpielLandschaft, aktuelle_spalte: int, weg_typ: Landschaftstyp) -> List[RasterFeld]:
@@ -81,9 +81,9 @@ class LandschaftGenerator:
                 rasterfeld.landschaftstyp = self.auswahl_random(typen)
                 spielzeile.spalten.append(rasterfeld)
         weg_typ = next(x for x in typen if x.name == "Weg")
-        self.mache_weg(spielLandschaft, weg_typ)
+        spielLandschaft.weg = self.mache_weg(spielLandschaft, weg_typ)
         erde_typ = next(x for x in typen if x.name == "Erde")
         self.platziere_erde(spielLandschaft, erde_typ, weg_typ)
         goldturm_typ = next(x for x in typen if x.name == "Goldturm")
         self.platziere_goldturm(spielLandschaft, erde_typ, goldturm_typ)
-        return spielLandschaft
+        return spielLandschaft #spiellandschaft generieren, aufrufen

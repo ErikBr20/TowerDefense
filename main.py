@@ -3,20 +3,13 @@ from basic_elements import *
 from menu import *
 from spielfeld import *
 
-game_window = pyglet.window.Window(1920, 1080, fullscreen=True)
+game_window = pyglet.window.Window(1920, 1080, fullscreen=True)#spielfeld auflösung
 
 
-menu: Menu = make_menu('Spielmenu', game_window)
+menu: Menu = make_menu('Spielmenu', game_window)#spielmenu machen
 
 def exit_handler(widget=None):
     pyglet.app.exit()
-
-
-#Hauptmenu
-
-#Spielfeld
-
-#Spieler
 
 end_press = False
 
@@ -57,12 +50,21 @@ def on_mouse_press(x, y, button, modifiers):
         if spielende:
             end_press = True
     return True
+
 #menu zeichnen
 @game_window.event
 def on_draw():
     game_window.clear()
     draw_menu(menu)
     draw_spiel(spiel)
+
+def update(dt):
+    if spiel:
+        for enemy in spiel.enemies:
+            print(f"pos=({enemy.x:.0f},{enemy.y:.0f})")
+            enemy.update(dt)
+            
+pyglet.clock.schedule_interval(update, 1/60)
 
 if __name__ == "__main__":
     pyglet.app.run()    
