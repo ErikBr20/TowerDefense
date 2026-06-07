@@ -3,29 +3,29 @@ import pyglet
 from collections import deque
 from spiel_lelements import SpielLandschaft
 
-class Enemy:
+class Defender:
     def __init__(self, landschaft: SpielLandschaft, batch: pyglet.graphics.Batch, animation, warte_zeit: float = 0.0):
-        # Wo soll der Ritter laufen?
+        # Wo soll der Verteidiger laufen?
         self.path = self._extrahiere_weg(landschaft)
         
-        # Ritter fängt beim ersten Wegpunkt an
-        self.path_index = 1
-        self.x = float(self.path[0][0])
-        self.y = float(self.path[0][1])
+        # Verteidiger fängt beim letzten Wegpunkt an (Ziel)
+        self.path_index = len(self.path) - 2
+        self.x = float(self.path[-1][0])
+        self.y = float(self.path[-1][1])
         
         # Geschwindigkeit in Pixel pro Sekunde
-        self.speed = 150
+        self.speed = 140
         
-        # True wenn der Ritter das Ende erreicht hat
+        # True wenn der Verteidiger den Start erreicht hat
         self.reached_end = False
         
-        # Wartezeit bevor der Ritter losläuft
+        # Wartezeit bevor der Verteidiger losläuft
         self.warte_zeit = warte_zeit
 
         # Grösste Framebreite nehmen damit der Scale nie wechselt
         self.fixed_width = max(f.image.width for f in animation.frames)
         
-        # Ritter erstellen
+        # Verteidiger erstellen
         self.sprite = pyglet.sprite.Sprite(animation, x=self.x, y=self.y, batch=batch, group=pyglet.graphics.Group(order=1), subpixel=True)
         
         # Scale einmal setzen
@@ -34,10 +34,10 @@ class Enemy:
         # Unsichtbar bis Wartezeit abgelaufen
         self.sprite.visible = False
 
-        # Startausrichtung bestimmen
+        # Startausrichtung bestimmen basierend auf erstem Schritt
         if len(self.path) > 1:
-            dx = self.path[1][0] - self.path[0][0]
-            dy = self.path[1][1] - self.path[0][1]
+            dx = self.path[-2][0] - self.path[-1][0]
+            dy = self.path[-2][1] - self.path[-1][1]
             self._aktualisiere_drehung(dx, dy)
 
     def _extrahiere_weg(self, landschaft: SpielLandschaft):
@@ -50,7 +50,7 @@ class Enemy:
             for feld in zeile.spalten:
                 if feld.landschaftstyp.name == "Weg":
                     weg_dict[(feld.index_x, feld.index_y)] = feld
-
+        
         # Startfeld: Feld in Spalte 0 mit genau 1 Wegfeld-Nachbarn
         start_felder = [f for f in weg_dict.values() if f.index_x == 0]
         start = start_felder[0]
@@ -64,7 +64,7 @@ class Enemy:
                 start = f
                 break
         
-        # Weg von links nach rechts suchen mit BFS
+        # Weg von links nach rechts suchen
         queue = deque()
         queue.append([(start.index_x, start.index_y)])
         besucht = {(start.index_x, start.index_y)}
@@ -95,7 +95,7 @@ class Enemy:
         ]
 
     def _aktualisiere_drehung(self, dx: float, dy: float):
-        # Ritter dreht sich je nach Richtung in die er läuft
+        # Verteidiger dreht sich je nach Richtung in die er läuft
         if abs(dx) > abs(dy):
             if dx > 0:
                 self.sprite.rotation = 270  # rechts
@@ -117,12 +117,12 @@ class Enemy:
         if not self.sprite.visible:
             self.sprite.visible = True
 
-        # Nichts tun wenn Ziel erreicht
-        if self.reached_end or self.path_index >= len(self.path):
+        # Nichts tun wenn Start erreicht
+        if self.reached_end or self.path_index < 0:
             self.reached_end = True
             return
 
-        # Nächsten Wegpunkt holen
+        # Nächsten Wegpunkt holen (rückwärts)
         ziel_x, ziel_y = self.path[self.path_index]
 
         # Richtung und Distanz berechnen
@@ -134,9 +134,9 @@ class Enemy:
         schritt = self.speed * dt
 
         if distanz <= schritt:
-            # Wegpunkt erreicht, weiter zum nächsten
+            # Wegpunkt erreicht, weiter zum vorherigen
             self.x, self.y = float(ziel_x), float(ziel_y)
-            self.path_index += 1
+            self.path_index -= 1
         else:
             # Einen Schritt in Richtung Ziel gehen
             self.x += (dx / distanz) * schritt

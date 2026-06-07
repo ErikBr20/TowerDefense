@@ -2,6 +2,7 @@ import pyglet
 from basic_elements import *
 from menu import *
 from spielfeld import *
+import math
 
 game_window = pyglet.window.Window(1920, 1080, fullscreen=True)#spielfeld auflösung
 
@@ -63,6 +64,26 @@ def update(dt):
         for enemy in spiel.enemies:
             print(f"pos=({enemy.x:.0f},{enemy.y:.0f})")
             enemy.update(dt)
+        for defender in spiel.defenders:
+            defender.update(dt)
+
+    # Kollision prüfen
+        for enemy in spiel.enemies[:]:
+            for defender in spiel.defenders[:]:
+                # Abstand zwischen enemy und defender berechnen
+                dx = enemy.x - defender.x
+                dy = enemy.y - defender.y
+                abstand = math.sqrt(dx * dx + dy * dy)
+                
+                # Wenn sie sich berühren (näher als 40 Pixel)
+                if abstand < 40:
+                    res.sounds.play()
+                    # Beide vom Bildschirm entfernen
+                    enemy.sprite.delete()
+                    defender.sprite.delete()
+                    spiel.enemies.remove(enemy)
+                    spiel.defenders.remove(defender)
+
             
 pyglet.clock.schedule_interval(update, 1/60)
 

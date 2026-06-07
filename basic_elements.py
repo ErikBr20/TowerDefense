@@ -65,9 +65,15 @@ def load_image(res: Ressources, var_name: str, file_name: str):
         print(f"Error: File '{file_name}' not found for variable '{var_name}'.")
 
 def load_static_ressources():
-    pyglet.resource.path = ['./artwork']
+    pyglet.resource.path = ['./artwork','./sounds']
     pyglet.resource.reindex()
+    # Sound laden
     res = Ressources()
+    import os
+    sound_pfad = os.path.join(os.path.dirname(__file__), 'sounds', 'treffer.mp3')
+    kollisions_sound = pyglet.media.load(sound_pfad, streaming=False)
+    res.sounds = kollisions_sound
+    
 
     images_to_load = {
         "button_frame": "button_frame.png",
