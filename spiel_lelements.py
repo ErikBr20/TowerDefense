@@ -37,3 +37,5 @@ class Spiel:
     landschaft: SpielLandschaft = None
     landschaftstypen: List[Landschaftstyp] = field(default_factory=list)
     batch: pyglet.graphics.Batch = None
+    turm_label: pyglet.text.Label = None
+

@@ -8,7 +8,7 @@ class Enemy:
         # Wo soll der Ritter laufen?
         self.path = self._extrahiere_weg(landschaft)
         
-        # Ritter fängt beim ersten Wegpunkt an
+        # Ritter fängt beim ersten Wegpunkt an und läuft zum 2 wegpunkt(path_index 1)
         self.path_index = 1
         self.x = float(self.path[0][0])
         self.y = float(self.path[0][1])
@@ -85,11 +85,10 @@ class Enemy:
                     besucht.add(nachbar)
                     queue.append(pfad + [nachbar])
         
-        # Felder in Pixel umrechnen, Y umkehren weil Pyglet von unten zählt
         return [
             (
                 x * TILE + TILE // 2,
-                (landschaft.anzahl_zeilen - 1 - y) * TILE + TILE // 2
+                y * TILE + TILE // 2
             )
             for (x, y) in bester_pfad
         ]

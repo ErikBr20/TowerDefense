@@ -2,7 +2,7 @@ import pyglet
 from basic_elements import *
 from menu import *
 from spielfeld import *
-import math
+
 
 game_window = pyglet.window.Window(1920, 1080, fullscreen=True)#spielfeld auflösung
 
@@ -36,20 +36,11 @@ def on_mouse_press(x, y, button, modifiers):
         pyglet.app.exit()
     if menu:
         menu.frame.on_mouse_press(x,y, button, modifiers)
-    elif spiel and spiel.popup_active:
-        spiel.popup_active = False
-        for el in spiel.popup_elements:
-            try:
-                el.delete()
-            except Exception:
-                pass
-        spiel.popup_elements = []
-        spiel.ereignisse_runde = []
-        update_spiel_info(spiel)
     elif spiel:
-        spielende = press_spiel(spiel, x, y, game_window)
-        if spielende:
-            end_press = True
+        rasterFeld = get_spiel_rasterfeld(spiel, x, y)
+        print("spalte_rf "+str(rasterFeld.index_x))
+        print("zeile_rf "+str(rasterFeld.index_y))
+        print(rasterFeld.landschaftstyp.name)
     return True
 
 #menu zeichnen
@@ -59,33 +50,7 @@ def on_draw():
     draw_menu(menu)
     draw_spiel(spiel)
 
-def update(dt):
-    if spiel:
-        for enemy in spiel.enemies:
-            print(f"pos=({enemy.x:.0f},{enemy.y:.0f})")
-            enemy.update(dt)
-        for defender in spiel.defenders:
-            defender.update(dt)
 
-    # Kollision prüfen
-        for enemy in spiel.enemies[:]:
-            for defender in spiel.defenders[:]:
-                # Abstand zwischen enemy und defender berechnen
-                dx = enemy.x - defender.x
-                dy = enemy.y - defender.y
-                abstand = math.sqrt(dx * dx + dy * dy)
-                
-                # Wenn sie sich berühren (näher als 40 Pixel)
-                if abstand < 40:
-                    res.sounds.play()
-                    # Beide vom Bildschirm entfernen
-                    enemy.sprite.delete()
-                    defender.sprite.delete()
-                    spiel.enemies.remove(enemy)
-                    spiel.defenders.remove(defender)
-
-            
-pyglet.clock.schedule_interval(update, 1/60)
 
 if __name__ == "__main__":
     pyglet.app.run()    

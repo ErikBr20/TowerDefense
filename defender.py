@@ -8,8 +8,8 @@ class Defender:
         # Wo soll der Verteidiger laufen?
         self.path = self._extrahiere_weg(landschaft)
         
-        # Verteidiger fängt beim letzten Wegpunkt an (Ziel)
-        self.path_index = len(self.path) - 2
+        # Verteidiger fängt beim letzten Wegpunkt an (Ziel), läuft richtung vorletzten wegpunkt(path_index)
+        self.path_index = len(self.path) - 2 
         self.x = float(self.path[-1][0])
         self.y = float(self.path[-1][1])
         
@@ -85,11 +85,10 @@ class Defender:
                     besucht.add(nachbar)
                     queue.append(pfad + [nachbar])
         
-        # Felder in Pixel umrechnen, Y umkehren weil Pyglet von unten zählt
         return [
             (
                 x * TILE + TILE // 2,
-                (landschaft.anzahl_zeilen - 1 - y) * TILE + TILE // 2
+                y * TILE + TILE // 2
             )
             for (x, y) in bester_pfad
         ]
