@@ -46,14 +46,14 @@ def initialisiere_spiel(spalten: int, zeilen: int, res: Ressources, dritter_spie
    
     spiel.enemies = []
     warte = 0.0
-    for i in range(5): #anzahl enemies
+    for i in range(11): #anzahl enemies
         enemy = Enemy(spiel.landschaft, spiel.batch, res.images.rittergeg_ani, warte_zeit= warte)
         spiel.enemies.append(enemy)
         warte += random.uniform(1.0, 3.0)  # zufälliger Abstand zwischen 1 und 3 Sekunden
     
     spiel.defenders = []
     warte = 0.0
-    for i in range(5): #anzahl defender
+    for i in range(11): #anzahl defender
         defender = Defender(spiel.landschaft, spiel.batch, res.images.ritterdef_ani, warte_zeit= warte)
         spiel.defenders.append(defender)
         warte += random.uniform(1.0, 3.0)
@@ -112,3 +112,13 @@ def get_spiel_rasterfeld(spiel: Spiel, x: int, y: int) -> RasterFeld:
             if index_x >= 0 and index_x < len(zeile.spalten):
                 return zeile.spalten[index_x]
     return None
+
+def mouse_press_spiel(spiel: Spiel, x: int, y: int): 
+        rasterFeld = get_spiel_rasterfeld(spiel, x, y)
+        if rasterFeld.landschaftstyp.name == "Erde" and spiel.spieler.muenzen >= 2:
+            turm_typ = next(x for x in spiel.landschaftstypen if x.name == "Turm")
+            rasterFeld.landschaftstyp = turm_typ
+            rasterFeld.sprite.image = rasterFeld.landschaftstyp.image
+            rasterFeld.sprite.scale_x = 100 / rasterFeld.sprite.image.width
+            rasterFeld.sprite.scale_y = 100 / rasterFeld.sprite.image.height
+            spiel.spieler.muenzen -= 2

@@ -37,10 +37,7 @@ def on_mouse_press(x, y, button, modifiers):
     if menu:
         menu.frame.on_mouse_press(x,y, button, modifiers)
     elif spiel:
-        rasterFeld = get_spiel_rasterfeld(spiel, x, y)
-        print("spalte_rf "+str(rasterFeld.index_x))
-        print("zeile_rf "+str(rasterFeld.index_y))
-        print(rasterFeld.landschaftstyp.name)
+        mouse_press_spiel(spiel, x, y)
     return True
 
 #menu zeichnen
