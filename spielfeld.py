@@ -94,7 +94,7 @@ def spiel_update(spiel: Spiel, dt: float, res: Ressources):
                 
                 # Wenn sie sich berühren (näher als 40 Pixel)
                 if abstand < 40:
-                    res.sounds.play()
+                    res.sounds2.play()
                     # Beide vom Bildschirm entfernen
                     enemy.sprite.delete()
                     defender.sprite.delete()
@@ -113,12 +113,13 @@ def get_spiel_rasterfeld(spiel: Spiel, x: int, y: int) -> RasterFeld:
                 return zeile.spalten[index_x]
     return None
 
-def mouse_press_spiel(spiel: Spiel, x: int, y: int): 
+def mouse_press_spiel(spiel: Spiel, x: int, y: int, res:Ressources): 
         rasterFeld = get_spiel_rasterfeld(spiel, x, y)
-        if rasterFeld.landschaftstyp.name == "Erde" and spiel.spieler.muenzen >= 2:
+        if rasterFeld.landschaftstyp.name == "Erde" and spiel.spieler.muenzen >= 2: #geld für turm
             turm_typ = next(x for x in spiel.landschaftstypen if x.name == "Turm")
             rasterFeld.landschaftstyp = turm_typ
             rasterFeld.sprite.image = rasterFeld.landschaftstyp.image
             rasterFeld.sprite.scale_x = 100 / rasterFeld.sprite.image.width
             rasterFeld.sprite.scale_y = 100 / rasterFeld.sprite.image.height
+            res.sounds.play()
             spiel.spieler.muenzen -= 2

@@ -37,7 +37,7 @@ def on_mouse_press(x, y, button, modifiers):
     if menu:
         menu.frame.on_mouse_press(x,y, button, modifiers)
     elif spiel:
-        mouse_press_spiel(spiel, x, y)
+        mouse_press_spiel(spiel, x, y, res)
     return True
 
 #menu zeichnen

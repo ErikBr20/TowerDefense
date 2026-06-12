@@ -72,7 +72,10 @@ def load_static_ressources():
     import os
     sound_pfad = os.path.join(os.path.dirname(__file__), 'sounds', 'treffer.mp3')
     kollisions_sound = pyglet.media.load(sound_pfad, streaming=False)
-    res.sounds = kollisions_sound
+    res.sounds2 = kollisions_sound
+    sound_pfad = os.path.join(os.path.dirname(__file__), 'sounds', 'placing.mp3')
+    placing_sound = pyglet.media.load(sound_pfad, streaming=False)
+    res.sounds = placing_sound
     
 
     images_to_load = {
