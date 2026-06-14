@@ -15,7 +15,7 @@ class Enemy:
         
         # Geschwindigkeit in Pixel pro Sekunde
         self.speed = 150
-        
+        self.schaden_timer = 0.0
         # True wenn der Ritter das Ende erreicht hat
         self.reached_end = False
         

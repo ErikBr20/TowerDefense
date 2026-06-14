@@ -76,6 +76,9 @@ def load_static_ressources():
     sound_pfad = os.path.join(os.path.dirname(__file__), 'sounds', 'placing.mp3')
     placing_sound = pyglet.media.load(sound_pfad, streaming=False)
     res.sounds = placing_sound
+    sound_pfad = os.path.join(os.path.dirname(__file__), 'sounds', 'boom.mp3')
+    boom_sound = pyglet.media.load(sound_pfad, streaming=False)
+    res.sounds3 = boom_sound
     
 
     images_to_load = {
@@ -112,8 +115,8 @@ def load_static_ressources():
         "könig4": "könig4.jpg",
         "könig5": "könig5.png",
         "könig8": "könig8.jpg",
-        "könig9": "könig9.jpg"
-                
+        "könig9": "könig9.jpg",
+        "gameover": "game_over_screen.png"      
 }
 
     # Load each image dynamically

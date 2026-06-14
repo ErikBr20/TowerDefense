@@ -6,6 +6,7 @@ from landschaftsgenerator import LandschaftGenerator
 from spiel_lelements import *
 import random
 import math
+from könig import König
 
 spiel: Spiel = None
 ressources: Ressources = None
@@ -43,17 +44,21 @@ def initialisiere_spiel(spalten: int, zeilen: int, res: Ressources, dritter_spie
     spiel.spieler = Spieler()
     spiel.spieler.muenzen_label = make_text_label(spalten * 100 + 10, zeilen * 100 - 300, "Münzen: 0", spiel.batch)
     spiel.turm_label = make_text_label(spalten * 100 + 10, zeilen * 100 - 400, "Turm: 300", spiel.batch)
-   
+    spiel.turm_leben = 300 #turm leben anpassen
+    spiel.könig_label = make_text_label(spalten * 100 + 10, zeilen * 100 - 500, "König: 20", spiel.batch)
+
     spiel.enemies = []
     warte = 0.0
     for i in range(11): #anzahl enemies
         enemy = Enemy(spiel.landschaft, spiel.batch, res.images.rittergeg_ani, warte_zeit= warte)
         spiel.enemies.append(enemy)
         warte += random.uniform(1.0, 3.0)  # zufälliger Abstand zwischen 1 und 3 Sekunden
+    koenig = König(spiel.landschaft, spiel.batch, res.images.könig_ani, res.sounds3, warte_zeit=5.0)
+    spiel.enemies.append(koenig)  # läuft dann automatisch mit
     
     spiel.defenders = []
     warte = 0.0
-    for i in range(11): #anzahl defender
+    for i in range(1): #anzahl defender
         defender = Defender(spiel.landschaft, spiel.batch, res.images.ritterdef_ani, warte_zeit= warte)
         spiel.defenders.append(defender)
         warte += random.uniform(1.0, 3.0)
@@ -79,28 +84,60 @@ def mehr_muenzen(spiel: Spiel):
 def spiel_update(spiel: Spiel, dt: float, res: Ressources):
     if spiel:
         for enemy in spiel.enemies:
-            #print(f"pos=({enemy.x:.0f},{enemy.y:.0f})")
             enemy.update(dt)
         for defender in spiel.defenders:
             defender.update(dt)
 
-    # Kollision prüfen
+        # Goldturm Schaden
+        for enemy in spiel.enemies:
+            if enemy.reached_end:
+                enemy.schaden_timer += dt
+                intervall = 1.0 if hasattr(enemy, 'leben') else 2.0
+                if enemy.schaden_timer >= intervall:
+                    enemy.schaden_timer = 0.0
+                    if spiel.turm_leben > 0:
+                        spiel.turm_leben -= 1
+                        spiel.turm_label.text = f"Turm: {spiel.turm_leben}"
+        
+        # Game Over prüfen
+        if spiel.turm_leben <= 0:
+            if not hasattr(spiel, 'game_over') or not spiel.game_over:
+                spiel.game_over = True
+                make_image_sprite(0, 0, 1920, 1080, res.images.gameover, spiel.batch)
+                spiel.game_over_sprite = pyglet.sprite.Sprite(res.images.gameover, 0, 0, batch=spiel.batch, group=pyglet.graphics.Group(order=100))
+                spiel.game_over_sprite.scale_x = 1920 / res.images.gameover.width
+                spiel.game_over_sprite.scale_y = 1080 / res.images.gameover.height
+
+        # Kollision prüfen
         for enemy in spiel.enemies[:]:
             for defender in spiel.defenders[:]:
-                # Abstand zwischen enemy und defender berechnen
                 dx = enemy.x - defender.x
                 dy = enemy.y - defender.y
                 abstand = math.sqrt(dx * dx + dy * dy)
                 
-                # Wenn sie sich berühren (näher als 40 Pixel)
                 if abstand < 40:
                     res.sounds2.play()
-                    # Beide vom Bildschirm entfernen
-                    enemy.sprite.delete()
-                    defender.sprite.delete()
-                    spiel.enemies.remove(enemy)
-                    spiel.defenders.remove(defender)
-                    mehr_muenzen(spiel)
+                    if defender in spiel.defenders:
+                        if defender.sprite._vertex_list is not None:
+                            defender.sprite.delete()
+                        spiel.defenders.remove(defender)
+
+                    if hasattr(enemy, 'leben'):
+                        enemy.leben -= 1
+                        spiel.könig_label.text = f"König: {enemy.leben}"
+                        if enemy.leben <= 0:
+                            if enemy in spiel.enemies:
+                                if enemy.sprite._vertex_list is not None:
+                                    enemy.sprite.delete()
+                                spiel.enemies.remove(enemy)
+                        break
+                    else:
+                        if enemy in spiel.enemies:
+                            if enemy.sprite._vertex_list is not None:
+                                enemy.sprite.delete()
+                            spiel.enemies.remove(enemy)
+                            mehr_muenzen(spiel)
+                        break
 
 def get_spiel_rasterfeld(spiel: Spiel, x: int, y: int) -> RasterFeld:
     index_x = int(x / 100)
