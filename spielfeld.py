@@ -58,7 +58,7 @@ def initialisiere_spiel(spalten: int, zeilen: int, res: Ressources, dritter_spie
     
     spiel.defenders = []
     warte = 0.0
-    for i in range(1): #anzahl defender
+    for i in range(300): #anzahl defender
         defender = Defender(spiel.landschaft, spiel.batch, res.images.ritterdef_ani, warte_zeit= warte)
         spiel.defenders.append(defender)
         warte += random.uniform(1.0, 3.0)
@@ -110,6 +110,8 @@ def spiel_update(spiel: Spiel, dt: float, res: Ressources):
 
         # Kollision prüfen
         for enemy in spiel.enemies[:]:
+            if not enemy.sprite.visible:
+                continue
             for defender in spiel.defenders[:]:
                 dx = enemy.x - defender.x
                 dy = enemy.y - defender.y
