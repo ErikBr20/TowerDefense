@@ -7,6 +7,7 @@ class Defender:
     def __init__(self, landschaft: SpielLandschaft, batch: pyglet.graphics.Batch, animation, warte_zeit: float = 0.0):
         # Wo soll der Verteidiger laufen?
         self.path = self._extrahiere_weg(landschaft)
+        self.angriff_timer = 0.0
         
         # Verteidiger fängt beim letzten Wegpunkt an (Ziel), läuft richtung vorletzten wegpunkt(path_index)
         self.path_index = len(self.path) - 2 
@@ -107,6 +108,10 @@ class Defender:
                 self.sprite.rotation = 0    # unten
 
     def update(self, dt: float):
+        # Angriff Timer immer runterzählen
+        if self.angriff_timer > 0:
+            self.angriff_timer -= dt
+
         # Warten bis die Wartezeit abgelaufen ist
         if self.warte_zeit > 0:
             self.warte_zeit -= dt
@@ -133,17 +138,12 @@ class Defender:
         schritt = self.speed * dt
 
         if distanz <= schritt:
-            # Wegpunkt erreicht, weiter zum vorherigen
             self.x, self.y = float(ziel_x), float(ziel_y)
             self.path_index -= 1
         else:
-            # Einen Schritt in Richtung Ziel gehen
             self.x += (dx / distanz) * schritt
             self.y += (dy / distanz) * schritt
 
-        # Drehung aktualisieren
         self._aktualisiere_drehung(dx, dy)
-
-        # Position aktualisieren
         self.sprite.x = self.x
         self.sprite.y = self.y

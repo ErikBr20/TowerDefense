@@ -87,30 +87,42 @@ def spiel_update(spiel: Spiel, dt: float, res: Ressources):
             enemy.update(dt)
         for defender in spiel.defenders:
             defender.update(dt)
+            # Defender Timer zurücksetzen wenn König spawnt
+        for enemy in spiel.enemies:
+            if hasattr(enemy, 'ist_könig') and enemy.sprite.visible and enemy.aktiv:
+                for defender in spiel.defenders:
+                    if defender.angriff_timer <= 0:
+                        defender.angriff_timer = random.uniform(0.5, 3.0)
+
+        # Treffer Timer runterzählen
+        for enemy in spiel.enemies:
+            if hasattr(enemy, 'treffer_timer') and enemy.treffer_timer > 0:
+                enemy.treffer_timer -= dt
 
         # Goldturm Schaden
         for enemy in spiel.enemies:
             if enemy.reached_end:
                 enemy.schaden_timer += dt
-                intervall = 1.0 if hasattr(enemy, 'leben') else 2.0
+                intervall = 1.0 if hasattr(enemy, 'ist_könig') else 2.0
                 if enemy.schaden_timer >= intervall:
                     enemy.schaden_timer = 0.0
                     if spiel.turm_leben > 0:
                         spiel.turm_leben -= 1
                         spiel.turm_label.text = f"Turm: {spiel.turm_leben}"
-        
+
         # Game Over prüfen
         if spiel.turm_leben <= 0:
             if not hasattr(spiel, 'game_over') or not spiel.game_over:
                 spiel.game_over = True
-                make_image_sprite(0, 0, 1920, 1080, res.images.gameover, spiel.batch)
                 spiel.game_over_sprite = pyglet.sprite.Sprite(res.images.gameover, 0, 0, batch=spiel.batch, group=pyglet.graphics.Group(order=100))
                 spiel.game_over_sprite.scale_x = 1920 / res.images.gameover.width
                 spiel.game_over_sprite.scale_y = 1080 / res.images.gameover.height
-
+        
         # Kollision prüfen
         for enemy in spiel.enemies[:]:
             if not enemy.sprite.visible:
+                continue
+            if hasattr(enemy, 'aktiv') and not enemy.aktiv:
                 continue
             for defender in spiel.defenders[:]:
                 dx = enemy.x - defender.x
@@ -118,22 +130,24 @@ def spiel_update(spiel: Spiel, dt: float, res: Ressources):
                 abstand = math.sqrt(dx * dx + dy * dy)
                 
                 if abstand < 40:
-                    res.sounds2.play()
-                    if defender in spiel.defenders:
-                        if defender.sprite._vertex_list is not None:
-                            defender.sprite.delete()
-                        spiel.defenders.remove(defender)
-
-                    if hasattr(enemy, 'leben'):
-                        enemy.leben -= 1
-                        spiel.könig_label.text = f"König: {enemy.leben}"
-                        if enemy.leben <= 0:
-                            if enemy in spiel.enemies:
-                                if enemy.sprite._vertex_list is not None:
-                                    enemy.sprite.delete()
-                                spiel.enemies.remove(enemy)
-                        break
+                    if hasattr(enemy, 'ist_könig'):
+                        if defender.angriff_timer <= 0:
+                            res.sounds2.play()
+                            enemy.leben -= 1
+                            defender.angriff_timer = 1.0
+                            spiel.könig_label.text = f"König: {enemy.leben}"
+                            if enemy.leben <= 0:
+                                if enemy in spiel.enemies:
+                                    if enemy.sprite._vertex_list is not None:
+                                        enemy.sprite.delete()
+                                    spiel.enemies.remove(enemy)
+                                break
                     else:
+                        res.sounds2.play()
+                        if defender in spiel.defenders:
+                            if defender.sprite._vertex_list is not None:
+                                defender.sprite.delete()
+                            spiel.defenders.remove(defender)
                         if enemy in spiel.enemies:
                             if enemy.sprite._vertex_list is not None:
                                 enemy.sprite.delete()

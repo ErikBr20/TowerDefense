@@ -8,8 +8,10 @@ from spiel_lelements import SpielLandschaft
 class König:
     def __init__(self, landschaft: SpielLandschaft, batch: pyglet.graphics.Batch, animation, sound, warte_zeit: float = 0.0):
         self.leben = 20
+        self.aktiv = False
         self.schaden_timer = 0.0
         self.sound = sound
+        ist_könig = True
 
         # Weg berechnen
         self.path = self._extrahiere_weg(landschaft)
@@ -100,18 +102,13 @@ class König:
         # Sichtbar machen
         if not self.sprite.visible:
             self.sprite.visible = True
-            self.sound.play()  # ← hier
+            self.aktiv = True
+            self.sound.play()
+            
 
-        # Ende des Weges erreicht → Schaden am Goldturm
+        # Ende des Weges erreicht → einfach stehen bleiben
         if self.reached_end or self.path_index >= len(self.path):
             self.reached_end = True
-            if spiel is not None:
-                self.schaden_timer += dt
-                if self.schaden_timer >= 1.0:
-                    self.schaden_timer = 0.0
-                    if spiel.turm_leben > 0:
-                        spiel.turm_leben -= 1
-                        spiel.turm_label.text = f"Turm: {spiel.turm_leben}"
             return
 
         # Nächsten Wegpunkt ansteuern
@@ -128,6 +125,13 @@ class König:
         else:
             self.x += (dx / distanz) * schritt
             self.y += (dy / distanz) * schritt
+
+        self._aktualisiere_drehung(dx, dy)
+        self.sprite.x = self.x
+        self.sprite.y = self.y
+
+    def entfernen(self):
+        self.sprite.delete()
 
         self._aktualisiere_drehung(dx, dy)
         self.sprite.x = self.x
