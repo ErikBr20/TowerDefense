@@ -107,10 +107,6 @@ def spiel_update(spiel: Spiel, dt: float, res: Ressources):
                 if pfeil.tot:
                     spiel.pfeile.remove(pfeil)
 
-        # 4. Rauchwolken-Manager updaten (falls vorhanden)
-        if hasattr(spiel, 'rauch_manager'):
-            spiel.rauch_manager.update(dt)
-
         # 5. Schaden am Spielerturm berechnen, wenn Gegner das Ende erreichen
         for enemy in spiel.enemies:
             if enemy.reached_end:

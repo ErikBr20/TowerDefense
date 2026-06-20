@@ -62,18 +62,10 @@ class Pfeil:
         # Fallback: Dein bisheriger Sound2, falls der spezifische nicht existiert
         elif hasattr(self.res, 'sounds3') and self.res.sounds4:
             self.res.sounds4.play()
-
-        # Rauchwolke entstehen lassen
-        if hasattr(spiel, 'rauch_manager'):
-            spiel.rauch_manager.erstelle_rauchwolke(self.x, self.y, anzahl=12)
     
         # Sound abspielen
         if hasattr(self.res, 'sounds2') and self.res.sounds2:
             self.res.sounds2.play()
-
-        # Rauchwolke GENAU DA entstehen lassen, wo der Gegner getroffen wurde!
-        if hasattr(spiel, 'rauch_manager'):
-            spiel.rauch_manager.erstelle_rauchwolke(self.x, self.y, anzahl=12)
 
         # Schaden anwenden
         enemy = self.ziel_gegner
