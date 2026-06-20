@@ -11,7 +11,7 @@ class König:
         self.aktiv = False
         self.schaden_timer = 0.0
         self.sound = sound
-        ist_könig = True
+        self.ist_könig = True
 
         # Weg berechnen
         self.path = self._extrahiere_weg(landschaft)
@@ -98,17 +98,18 @@ class König:
         if self.warte_zeit > 0:
             self.warte_zeit -= dt
             return
-
+    
         # Sichtbar machen
         if not self.sprite.visible:
             self.sprite.visible = True
             self.aktiv = True
             self.sound.play()
-            
 
-        # Ende des Weges erreicht → einfach stehen bleiben
-        if self.reached_end or self.path_index >= len(self.path):
+        # Ende des Weges erreicht → stehen bleiben aber nicht despawnen
+        if self.path_index >= len(self.path):
             self.reached_end = True
+            self.sprite.x = self.x
+            self.sprite.y = self.y
             return
 
         # Nächsten Wegpunkt ansteuern
@@ -132,10 +133,6 @@ class König:
 
     def entfernen(self):
         self.sprite.delete()
-
-        self._aktualisiere_drehung(dx, dy)
-        self.sprite.x = self.x
-        self.sprite.y = self.y
 
     def entfernen(self):
         self.sprite.delete()

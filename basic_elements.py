@@ -116,7 +116,8 @@ def load_static_ressources():
         "könig5": "könig5.png",
         "könig8": "könig8.jpg",
         "könig9": "könig9.jpg",
-        "gameover": "game_over_screen.png"      
+        "gameover": "game_over_screen.png",
+        "youwin": "you_win_screen.png"    
 }
 
     # Load each image dynamically
