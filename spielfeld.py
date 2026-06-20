@@ -15,9 +15,10 @@ def update(dt):
     spiel_update(spiel, dt, ressources)
 
 def initialisiere_spiel(spalten: int, zeilen: int, res: Ressources, dritter_spieler: bool) -> Spiel:
-
     global spiel
     spiel = Spiel()
+    spiel.türme = []
+    spiel.pfeile = []
     global ressources
     ressources = res
     spiel.landschaftstypen.append(make_landschaftstyp("Baum", True, res.images.baum))
@@ -53,7 +54,7 @@ def initialisiere_spiel(spalten: int, zeilen: int, res: Ressources, dritter_spie
         enemy = Enemy(spiel.landschaft, spiel.batch, res.images.rittergeg_ani, warte_zeit= warte)
         spiel.enemies.append(enemy)
         warte += random.uniform(1.0, 3.0)  # zufälliger Abstand zwischen 1 und 3 Sekunden
-    koenig = König(spiel.landschaft, spiel.batch, res.images.könig_ani, res.sounds3, warte_zeit=5.0)
+    koenig = König(spiel.landschaft, spiel.batch, res.images.könig_ani, res.sounds3, warte_zeit=60.0)
     spiel.enemies.append(koenig)  # läuft dann automatisch mit
     
     spiel.defenders = []
@@ -83,12 +84,29 @@ def mehr_muenzen(spiel: Spiel):
 
 def spiel_update(spiel: Spiel, dt: float, res: Ressources):
     if spiel:
+        # 1. Alle Einheiten updaten
         for enemy in spiel.enemies:
             enemy.update(dt)
         for defender in spiel.defenders:
             defender.update(dt)
 
-        # Goldturm Schaden
+        # 2. Alle platzierten Türme updaten
+        if hasattr(spiel, 'türme'):
+            for turm in spiel.türme:
+                turm.update(dt, spiel, res)
+
+        # 3. Alle fliegenden Pfeile updaten (Jetzt korrekt eingerückt!)
+        if hasattr(spiel, 'pfeile'):
+            for pfeil in spiel.pfeile[:]:
+                pfeil.update(dt, spiel)
+                if pfeil.tot:
+                    spiel.pfeile.remove(pfeil)
+
+        # 4. Rauchwolken-Manager updaten (falls vorhanden)
+        if hasattr(spiel, 'rauch_manager'):
+            spiel.rauch_manager.update(dt)
+
+        # 5. Goldturm Schaden berechnen
         for enemy in spiel.enemies:
             if enemy.reached_end:
                 enemy.schaden_timer += dt
@@ -99,7 +117,7 @@ def spiel_update(spiel: Spiel, dt: float, res: Ressources):
                         spiel.turm_leben -= 1
                         spiel.turm_label.text = f"Turm: {spiel.turm_leben}"
 
-        # Game Over prüfen
+        # 6. Game Over prüfen
         if spiel.turm_leben <= 0:
             if not hasattr(spiel, 'game_over') or not spiel.game_over:
                 spiel.game_over = True
@@ -107,6 +125,7 @@ def spiel_update(spiel: Spiel, dt: float, res: Ressources):
                 spiel.game_over_sprite.scale_x = 1920 / res.images.gameover.width
                 spiel.game_over_sprite.scale_y = 1080 / res.images.gameover.height
 
+        # 7. Siegbedingung prüfen (Gibt es noch einen König?)
         for enemy in spiel.enemies:
             if hasattr(enemy, 'ist_könig'):
                 break
@@ -117,7 +136,7 @@ def spiel_update(spiel: Spiel, dt: float, res: Ressources):
                 spiel.you_win_sprite.scale_x = 1920 / res.images.youwin.width
                 spiel.you_win_sprite.scale_y = 1080 / res.images.youwin.height
 
-        # Kollision prüfen
+        # 8. Kollision zwischen Verteidigern (Defenders) und Gegnern prüfen
         for enemy in spiel.enemies[:]:
             if not enemy.sprite.visible:
                 continue
@@ -159,7 +178,7 @@ def spiel_update(spiel: Spiel, dt: float, res: Ressources):
                             spiel.enemies.remove(enemy)
                             mehr_muenzen(spiel)
                         break
-
+                    
 def get_spiel_rasterfeld(spiel: Spiel, x: int, y: int) -> RasterFeld:
     index_x = int(x / 100)
     index_y = int(y / 100)
@@ -171,7 +190,7 @@ def get_spiel_rasterfeld(spiel: Spiel, x: int, y: int) -> RasterFeld:
                 return zeile.spalten[index_x]
     return None
 
-def mouse_press_spiel(spiel: Spiel, x: int, y: int, res:Ressources): 
+def mouse_press_spiel(spiel: Spiel, x: int, y: int, res:Ressources):
         rasterFeld = get_spiel_rasterfeld(spiel, x, y)
         if rasterFeld.landschaftstyp.name == "Erde" and spiel.spieler.muenzen >= 2: #geld für turm
             turm_typ = next(x for x in spiel.landschaftstypen if x.name == "Turm")
@@ -179,5 +198,8 @@ def mouse_press_spiel(spiel: Spiel, x: int, y: int, res:Ressources):
             rasterFeld.sprite.image = rasterFeld.landschaftstyp.image
             rasterFeld.sprite.scale_x = 100 / rasterFeld.sprite.image.width
             rasterFeld.sprite.scale_y = 100 / rasterFeld.sprite.image.height
+            from turm import TurmLogik
+            neuer_turm = TurmLogik(rasterFeld)
+            spiel.türme.append(neuer_turm)
             res.sounds.play()
             spiel.spieler.muenzen -= 2

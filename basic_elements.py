@@ -79,6 +79,12 @@ def load_static_ressources():
     sound_pfad = os.path.join(os.path.dirname(__file__), 'sounds', 'boom.mp3')
     boom_sound = pyglet.media.load(sound_pfad, streaming=False)
     res.sounds3 = boom_sound
+    sound_pfad = os.path.join(os.path.dirname(__file__), 'sounds', 'einschlag.mp3')
+    einschlag_sound = pyglet.media.load(sound_pfad, streaming=False)
+    res.sounds4 = einschlag_sound
+    sound_pfad = os.path.join(os.path.dirname(__file__), 'sounds', 'abschuss.mp3')
+    abschuss_sound = pyglet.media.load(sound_pfad, streaming=False)
+    res.sounds5 = abschuss_sound
     
 
     images_to_load = {
