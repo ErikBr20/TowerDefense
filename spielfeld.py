@@ -1,7 +1,7 @@
 import pyglet
 from enemy import Enemy
 from defender import Defender
-from basic_elements import Ressources, make_circle, make_box, make_image_sprite, make_text_label, make_rectangle
+from basic_elements import Ressources, make_image_sprite, make_text_label
 from landschaftsgenerator import LandschaftGenerator
 from spiel_lelements import *
 import random
@@ -26,31 +26,36 @@ def initialisiere_spiel(spalten: int, zeilen: int, res: Ressources, dritter_spie
     spiel.landschaftstypen.append(make_landschaftstyp("Turm", False, res.images.turm))
     spiel.landschaftstypen.append(make_landschaftstyp("Gras", True, res.images.gras))
     spiel.landschaftstypen.append(make_landschaftstyp("Weg", False, res.images.weg))
-    spiel.landschaftstypen.append(make_landschaftstyp("Goldturm", False, res.images.goldturm)) #Bilder laden
-
+    spiel.landschaftstypen.append(make_landschaftstyp("Goldturm", False, res.images.goldturm)) # Bilder laden
+    spiel.landschaftstypen.append(make_landschaftstyp("turm2", False, res.images.turm2))
     
     spielBatch = pyglet.graphics.Batch()
-    spiel.batch = spielBatch #grafik auf en Spielbatch laden
+    spiel.batch = spielBatch # grafik auf den Spielbatch laden
 
     generator = LandschaftGenerator()
     spiel.landschaft = generator.make_spiel_landschaft(zeilen, spalten, spiel.landschaftstypen)
 
-
+    # Schleife durch die Karte: Sprites erstellen UND den Start-Goldturm aktivieren
     for zeile in spiel.landschaft.zeilen:
         y = spiel.landschaft.zeilen.index(zeile)
         screen_y = y * 100
         for spalte in zeile.spalten:
             x = zeile.spalten.index(spalte)
             spalte.sprite = make_image_sprite(x * 100, screen_y, 100, 100, spalte.landschaftstyp.image, spiel.batch)
+            if spalte.landschaftstyp.name == "Goldturm":
+                from turm import GoldTurm
+                neuer_goldturm = GoldTurm(spalte)
+                spiel.türme.append(neuer_goldturm)
+
     spiel.spieler = Spieler()
     spiel.spieler.muenzen_label = make_text_label(spalten * 100 + 10, zeilen * 100 - 300, "Münzen: 0", spiel.batch)
-    spiel.turm_label = make_text_label(spalten * 100 + 10, zeilen * 100 - 400, "Turm: 300", spiel.batch)
-    spiel.turm_leben = 300 #turm leben anpassen
+    spiel.turm_label = make_text_label(spalten * 100 + 10, zeilen * 100 - 400, "Turm: 40", spiel.batch)
+    spiel.turm_leben = 40 # turm leben anpassen
     spiel.könig_label = make_text_label(spalten * 100 + 10, zeilen * 100 - 500, "König: 20", spiel.batch)
 
     spiel.enemies = []
     warte = 0.0
-    for i in range(11): #anzahl enemies
+    for i in range(50): # anzahl enemies
         enemy = Enemy(spiel.landschaft, spiel.batch, res.images.rittergeg_ani, warte_zeit= warte)
         spiel.enemies.append(enemy)
         warte += random.uniform(1.0, 3.0)  # zufälliger Abstand zwischen 1 und 3 Sekunden
@@ -59,10 +64,10 @@ def initialisiere_spiel(spalten: int, zeilen: int, res: Ressources, dritter_spie
     
     spiel.defenders = []
     warte = 0.0
-    for i in range(50): #anzahl defender
+    for i in range(50): # anzahl defender
         defender = Defender(spiel.landschaft, spiel.batch, res.images.ritterdef_ani, warte_zeit= warte)
         spiel.defenders.append(defender)
-        warte += random.uniform(1.0, 3.0)
+        warte += random.uniform(4.0, 6.0)
 
     pyglet.clock.schedule_interval(update, 1/60)
     return spiel
@@ -90,12 +95,12 @@ def spiel_update(spiel: Spiel, dt: float, res: Ressources):
         for defender in spiel.defenders:
             defender.update(dt)
 
-        # 2. Alle platzierten Türme updaten
+        # 2. Alle platzierten Türme updaten (Normal- und Goldtürme)
         if hasattr(spiel, 'türme'):
             for turm in spiel.türme:
                 turm.update(dt, spiel, res)
 
-        # 3. Alle fliegenden Pfeile updaten (Jetzt korrekt eingerückt!)
+        # 3. Alle fliegenden Pfeile updaten
         if hasattr(spiel, 'pfeile'):
             for pfeil in spiel.pfeile[:]:
                 pfeil.update(dt, spiel)
@@ -106,7 +111,7 @@ def spiel_update(spiel: Spiel, dt: float, res: Ressources):
         if hasattr(spiel, 'rauch_manager'):
             spiel.rauch_manager.update(dt)
 
-        # 5. Goldturm Schaden berechnen
+        # 5. Schaden am Spielerturm berechnen, wenn Gegner das Ende erreichen
         for enemy in spiel.enemies:
             if enemy.reached_end:
                 enemy.schaden_timer += dt
@@ -116,6 +121,8 @@ def spiel_update(spiel: Spiel, dt: float, res: Ressources):
                     if spiel.turm_leben > 0:
                         spiel.turm_leben -= 1
                         spiel.turm_label.text = f"Turm: {spiel.turm_leben}"
+                        if hasattr(res, 'sounds6') and res.sounds6:
+                            res.sounds6.play()
 
         # 6. Game Over prüfen
         if spiel.turm_leben <= 0:
@@ -135,7 +142,7 @@ def spiel_update(spiel: Spiel, dt: float, res: Ressources):
                 spiel.you_win_sprite = pyglet.sprite.Sprite(res.images.youwin, 0, 0, batch=spiel.batch, group=pyglet.graphics.Group(order=100))
                 spiel.you_win_sprite.scale_x = 1920 / res.images.youwin.width
                 spiel.you_win_sprite.scale_y = 1080 / res.images.youwin.height
-
+                
         # 8. Kollision zwischen Verteidigern (Defenders) und Gegnern prüfen
         for enemy in spiel.enemies[:]:
             if not enemy.sprite.visible:
@@ -178,7 +185,7 @@ def spiel_update(spiel: Spiel, dt: float, res: Ressources):
                             spiel.enemies.remove(enemy)
                             mehr_muenzen(spiel)
                         break
-                    
+
 def get_spiel_rasterfeld(spiel: Spiel, x: int, y: int) -> RasterFeld:
     index_x = int(x / 100)
     index_y = int(y / 100)
@@ -190,16 +197,50 @@ def get_spiel_rasterfeld(spiel: Spiel, x: int, y: int) -> RasterFeld:
                 return zeile.spalten[index_x]
     return None
 
-def mouse_press_spiel(spiel: Spiel, x: int, y: int, res:Ressources):
-        rasterFeld = get_spiel_rasterfeld(spiel, x, y)
-        if rasterFeld.landschaftstyp.name == "Erde" and spiel.spieler.muenzen >= 2: #geld für turm
+def mouse_press_spiel(spiel: Spiel, x: int, y: int, res: Ressources): 
+    rasterFeld = get_spiel_rasterfeld(spiel, x, y)
+    
+    if rasterFeld and rasterFeld.landschaftstyp:
+        
+        # --- 1. NORMALER TURM WIRD GEUPGRADET ---
+        if rasterFeld.landschaftstyp.name == "Turm":
+            if spiel.spieler.muenzen >= 5:  
+                from turm import TurmLogik
+                for turm in spiel.türme:
+                    if turm.index_x == rasterFeld.index_x and turm.index_y == rasterFeld.index_y:
+                        # Da es turm.stufe nicht mehr gibt, prüfen wir, ob es ein normaler Turm ist
+                        if type(turm) == TurmLogik:
+                            spiel.spieler.muenzen -= 5
+                            spiel.spieler.muenzen_label.text = "Münzen: " + str(spiel.spieler.muenzen)
+                            
+                            res.sounds.play()
+                            
+                            # Grafiktyp auf turm2 wechseln
+                            turm2_typ = next(x for x in spiel.landschaftstypen if x.name == "turm2")
+                            rasterFeld.landschaftstyp = turm2_typ
+                            
+                            # Führt das Upgrade auf diesem einzelnen Turm durch
+                            turm.upgrade(turm2_typ.image)
+                            break
+            else:
+                print("Nicht genug Münzen für Upgrade! (5 benötigt)")
+
+        # --- 2. ERDE: NORMALEN TURM KAUFEN ---
+        elif rasterFeld.landschaftstyp.name == "Erde" and spiel.spieler.muenzen >= 2:
             turm_typ = next(x for x in spiel.landschaftstypen if x.name == "Turm")
             rasterFeld.landschaftstyp = turm_typ
             rasterFeld.sprite.image = rasterFeld.landschaftstyp.image
             rasterFeld.sprite.scale_x = 100 / rasterFeld.sprite.image.width
             rasterFeld.sprite.scale_y = 100 / rasterFeld.sprite.image.height
+            
             from turm import TurmLogik
             neuer_turm = TurmLogik(rasterFeld)
             spiel.türme.append(neuer_turm)
+            
             res.sounds.play()
             spiel.spieler.muenzen -= 2
+            spiel.spieler.muenzen_label.text = "Münzen: " + str(spiel.spieler.muenzen)
+            
+        # --- 3. Klick auf den festen Goldturm blockieren (Er kann nicht gekauft/erweitert werden) ---
+        elif rasterFeld.landschaftstyp.name == "Goldturm":
+            print("Das ist der legendäre Goldturm. Er verteidigt das Ende des Weges vollautomatisch!")

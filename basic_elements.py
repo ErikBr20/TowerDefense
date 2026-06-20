@@ -14,7 +14,6 @@ class NamedImages:
         return self.images.get(name, None)
 
     def __getattr__(self, name: str) -> Optional[pyglet.image.AbstractImage]:
-        """Allow dynamic attribute-style access to images."""
         if name in self.images:
             return self.images[name]
         raise AttributeError("f'NamedImages' object has no attribute '{name}'")
@@ -85,6 +84,9 @@ def load_static_ressources():
     sound_pfad = os.path.join(os.path.dirname(__file__), 'sounds', 'abschuss.mp3')
     abschuss_sound = pyglet.media.load(sound_pfad, streaming=False)
     res.sounds5 = abschuss_sound
+    sound_pfad = os.path.join(os.path.dirname(__file__), 'sounds', 'goldturm_hit.mp3')
+    goldturm_sound = pyglet.media.load(sound_pfad, streaming=False)
+    res.sounds6 = goldturm_sound
     
 
     images_to_load = {
@@ -123,7 +125,9 @@ def load_static_ressources():
         "könig8": "könig8.jpg",
         "könig9": "könig9.jpg",
         "gameover": "game_over_screen.png",
-        "youwin": "you_win_screen.png"    
+        "youwin": "you_win_screen.png",
+        "turm2": "turm2.png",
+        "goldpfeil":"gold_pfeil.png"  
 }
 
     # Load each image dynamically
@@ -197,3 +201,4 @@ def load_static_ressources():
     res.images.add_image("könig_ani", könig_ani)
 
     return res
+
