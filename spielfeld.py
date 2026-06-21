@@ -58,7 +58,7 @@ def initialisiere_spiel(spalten: int, zeilen: int, res: Ressources, dritter_spie
     for i in range(50): # anzahl enemies
         enemy = Enemy(spiel.landschaft, spiel.batch, res.images.rittergeg_ani, warte_zeit= warte)
         spiel.enemies.append(enemy)
-        warte += random.uniform(1.0, 3.0)  # zufälliger Abstand zwischen 1 und 3 Sekunden
+        warte += random.uniform(0.5, 2.0)  # zufälliger Abstand zwischen 0.5 und 2 Sekunden
     koenig = König(spiel.landschaft, spiel.batch, res.images.könig_ani, res.sounds3, warte_zeit=60.0)
     spiel.enemies.append(koenig)  # läuft dann automatisch mit
     
@@ -198,15 +198,15 @@ def mouse_press_spiel(spiel: Spiel, x: int, y: int, res: Ressources):
     
     if rasterFeld and rasterFeld.landschaftstyp:
         
-        # --- 1. NORMALER TURM WIRD GEUPGRADET ---
+        #  1. NORMALER TURM WIRD GEUPGRADET 
         if rasterFeld.landschaftstyp.name == "Turm":
-            if spiel.spieler.muenzen >= 5:  
+            if spiel.spieler.muenzen >= 7:  
                 from turm import TurmLogik
                 for turm in spiel.türme:
                     if turm.index_x == rasterFeld.index_x and turm.index_y == rasterFeld.index_y:
                         # Da es turm.stufe nicht mehr gibt, prüfen wir, ob es ein normaler Turm ist
                         if type(turm) == TurmLogik:
-                            spiel.spieler.muenzen -= 5
+                            spiel.spieler.muenzen -= 7
                             spiel.spieler.muenzen_label.text = "Münzen: " + str(spiel.spieler.muenzen)
                             
                             res.sounds.play()
@@ -218,11 +218,9 @@ def mouse_press_spiel(spiel: Spiel, x: int, y: int, res: Ressources):
                             # Führt das Upgrade auf diesem einzelnen Turm durch
                             turm.upgrade(turm2_typ.image)
                             break
-            else:
-                print("Nicht genug Münzen für Upgrade! (5 benötigt)")
 
-        # --- 2. ERDE: NORMALEN TURM KAUFEN ---
-        elif rasterFeld.landschaftstyp.name == "Erde" and spiel.spieler.muenzen >= 2:
+        #  2. ERDE: NORMALEN TURM KAUFEN
+        elif rasterFeld.landschaftstyp.name == "Erde" and spiel.spieler.muenzen >= 4:
             turm_typ = next(x for x in spiel.landschaftstypen if x.name == "Turm")
             rasterFeld.landschaftstyp = turm_typ
             rasterFeld.sprite.image = rasterFeld.landschaftstyp.image
@@ -234,9 +232,7 @@ def mouse_press_spiel(spiel: Spiel, x: int, y: int, res: Ressources):
             spiel.türme.append(neuer_turm)
             
             res.sounds.play()
-            spiel.spieler.muenzen -= 2
+            spiel.spieler.muenzen -= 4
             spiel.spieler.muenzen_label.text = "Münzen: " + str(spiel.spieler.muenzen)
             
-        # --- 3. Klick auf den festen Goldturm blockieren (Er kann nicht gekauft/erweitert werden) ---
-        elif rasterFeld.landschaftstyp.name == "Goldturm":
-            print("Das ist der legendäre Goldturm. Er verteidigt das Ende des Weges vollautomatisch!")
+        
