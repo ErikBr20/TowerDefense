@@ -115,7 +115,7 @@ def spiel_update(spiel: Spiel, dt: float, res: Ressources):
                 if enemy.schaden_timer >= intervall:
                     enemy.schaden_timer = 0.0
                     if spiel.turm_leben > 0:
-                        spiel.turm_leben -= 1
+                        spiel.turm_leben -= 3
                         spiel.turm_label.text = f"Turm: {spiel.turm_leben}"
                         if hasattr(res, 'sounds6') and res.sounds6:
                             res.sounds6.play()

@@ -36,7 +36,7 @@ class König:
             group=pyglet.graphics.Group(order=1),
             subpixel=True,
         )
-        self.sprite.scale = 60 / self.fixed_width
+        self.sprite.scale = 100 / self.fixed_width
         self.sprite.visible = False
 
         dx = self.path[self.path_index][0] - self.x
