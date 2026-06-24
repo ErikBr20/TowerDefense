@@ -8,13 +8,12 @@ class Pfeil:
         self.ziel_gegner = ziel_gegner
         self.res = res
         
-        # Pfeil-Bild laden (Falls kein pfeil.png existiert, nutzen wir ein Fallback)
+        # Pfeil-Bild laden 
         try:
             self.image = pyglet.resource.image('pfeil.png')
             self.image.anchor_x = self.image.width // 2
             self.image.anchor_y = self.image.height // 2
         except:
-            # Fallback: Wenn kein Bild da ist, nehmen wir ein anderes kleines Bild aus deinen Ressourcen
             self.image = res.images.baum 
             
         self.sprite = pyglet.sprite.Sprite(self.image, x=self.x, y=self.y, batch=batch)
@@ -33,7 +32,7 @@ class Pfeil:
             self.zerstoeren()
             return
 
-        # Vektor zum Gegner berechnen
+        #Weg zum Gegner berechnen
         dx = self.ziel_gegner.x - self.x
         dy = self.ziel_gegner.y - self.y
         abstand = math.sqrt(dx * dx + dy * dy)

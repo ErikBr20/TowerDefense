@@ -2,7 +2,7 @@ import math
 from spiel_lelements import Spiel, RasterFeld
 
 class TurmLogik:
-    #Der normale Standard-Turm (Stufe 1)
+    #Der normale Turm
     def __init__(self, raster_feld: RasterFeld):
         self.raster_feld = raster_feld
         self.index_x = raster_feld.index_x
@@ -62,7 +62,7 @@ class TurmLogik:
     def upgrade(self, neues_bild):
         #Turm 2 Upgraden
         self.schaden = 2              # Mehr Schaden für Turm 2
-        self.angriff_cooldown = 3.0   # Schießt doppelt so schnell (alle 2 Sekunden)
+        self.angriff_cooldown = 3.0   #schiesst alle 3s
         self.raster_feld.sprite.image = neues_bild
 
 
@@ -70,7 +70,7 @@ class GoldTurm(TurmLogik):
     def __init__(self, raster_feld: RasterFeld):
         super().__init__(raster_feld)
         self.schaden = 3
-        self.angriff_cooldown = 5.0  # Schießt alle 2 Sekunden
+        self.angriff_cooldown = 5.0  
 
     def schiesse_auf(self, enemy, spiel: Spiel, res):
         if hasattr(res, 'sounds5') and res.sounds5:

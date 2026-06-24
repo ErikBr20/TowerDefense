@@ -3,7 +3,6 @@ from basic_elements import *
 from menu import *
 from spielfeld import *
 
-
 game_window = pyglet.window.Window(1920, 1080, fullscreen=True)#spielfeld auflösung
 
 

@@ -4,13 +4,13 @@ import random
 from collections import deque
 from spiel_lelements import SpielLandschaft
 
-
 class König:
-    def __init__(self, landschaft: SpielLandschaft, batch: pyglet.graphics.Batch, animation, sound, warte_zeit: float = 0.0):
+    def __init__(self, landschaft: SpielLandschaft, batch: pyglet.graphics.Batch, animation, sounds3, sounds7, warte_zeit: float = 0.0):
         self.leben = 20
         self.aktiv = False
         self.schaden_timer = 0.0
-        self.sound = sound
+        self.sound = sounds3
+        self.sound2 = sounds7
         self.ist_könig = True
 
         # Weg berechnen
@@ -103,9 +103,11 @@ class König:
         if not self.sprite.visible:
             self.sprite.visible = True
             self.aktiv = True
+            self.sound2.volume = 1
             self.sound.play()
+            self.sound2.play()
 
-        # Ende des Weges erreicht → stehen bleiben aber nicht despawnen
+        # Ende des Weges erreicht, stehen bleiben aber nicht despawnen
         if self.path_index >= len(self.path):
             self.reached_end = True
             self.sprite.x = self.x

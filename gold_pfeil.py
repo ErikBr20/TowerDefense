@@ -14,5 +14,5 @@ class GoldPfeil(Pfeil):
             self.image.anchor_y = self.image.height // 2
             self.sprite.image = self.image
         except Exception as e:
-            print("Goldener Pfeil Bild nicht gefunden, benutze Standardgrafik:", e)
+            print("Goldener Pfeil Bild nicht gefunden", e)
         self.geschwindigkeit = 600.0  # Fliegt schneller als der normale Pfeil

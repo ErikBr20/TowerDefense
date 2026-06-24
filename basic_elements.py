@@ -50,12 +50,6 @@ def make_text_label(x, y, text, batch) -> pyglet.text.Label:
 def make_rectangle(x: int, y: int, w: int, h: int, color: (tuple[int, int, int, int] | tuple[int, int, int]), batch: pyglet.graphics.Batch) -> pyglet.shapes.Rectangle:
     return pyglet.shapes.Rectangle(x, y, width=w, height=h, color=color, batch=batch)
 
-def make_box(x: int, y: int, w: int, h: int, thickness: int, color: (tuple[int, int, int, int] | tuple[int, int, int]), batch: pyglet.graphics.Batch) -> pyglet.shapes.Box:
-    return pyglet.shapes.Box(x, y, width=w, height=h, thickness=thickness, color=color, batch=batch)
-
-def make_circle(x: int, y: int, r: int, color: (tuple[int, int, int, int] | tuple[int, int, int]), batch: pyglet.graphics.Batch) -> pyglet.shapes.Circle:
-    return pyglet.shapes.Circle(x=x, y=y, radius=r, color=color, batch=batch)
-
 def load_image(res: Ressources, var_name: str, file_name: str):
     try:
         image = pyglet.resource.image(file_name)
@@ -87,6 +81,9 @@ def load_static_ressources():
     sound_pfad = os.path.join(os.path.dirname(__file__), 'sounds', 'goldturm_hit.mp3')
     goldturm_sound = pyglet.media.load(sound_pfad, streaming=False)
     res.sounds6 = goldturm_sound
+    sound_pfad = os.path.join(os.path.dirname(__file__), 'sounds', 'lighter.mp3')
+    lighter_sound = pyglet.media.load(sound_pfad, streaming=False)
+    res.sounds7 = lighter_sound
     
 
     images_to_load = {
@@ -130,7 +127,6 @@ def load_static_ressources():
         "goldpfeil":"gold_pfeil.png"  
 }
 
-    # Load each image dynamically
     for var_name, file_name in images_to_load.items():
         load_image(res, var_name, file_name)
 

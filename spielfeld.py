@@ -8,9 +8,6 @@ import random
 import math
 from könig import König
 
-spiel: Spiel = None
-ressources: Ressources = None
-
 def update(dt):
     spiel_update(spiel, dt, ressources)
 
@@ -55,16 +52,16 @@ def initialisiere_spiel(spalten: int, zeilen: int, res: Ressources, dritter_spie
 
     spiel.enemies = []
     warte = 0.0
-    for i in range(50): # anzahl enemies
+    for i in range(70): # anzahl enemies
         enemy = Enemy(spiel.landschaft, spiel.batch, res.images.rittergeg_ani, warte_zeit= warte)
         spiel.enemies.append(enemy)
         warte += random.uniform(0.5, 2.0)  # zufälliger Abstand zwischen 0.5 und 2 Sekunden
-    koenig = König(spiel.landschaft, spiel.batch, res.images.könig_ani, res.sounds3, warte_zeit=60.0)
+    koenig = König(spiel.landschaft, spiel.batch, res.images.könig_ani, res.sounds3, res.sounds7, warte_zeit=60.0)
     spiel.enemies.append(koenig)  # läuft dann automatisch mit
     
     spiel.defenders = []
     warte = 0.0
-    for i in range(50): # anzahl defender
+    for i in range(70): # anzahl defender
         defender = Defender(spiel.landschaft, spiel.batch, res.images.ritterdef_ani, warte_zeit= warte)
         spiel.defenders.append(defender)
         warte += random.uniform(4.0, 6.0)
@@ -197,8 +194,7 @@ def mouse_press_spiel(spiel: Spiel, x: int, y: int, res: Ressources):
     rasterFeld = get_spiel_rasterfeld(spiel, x, y)
     
     if rasterFeld and rasterFeld.landschaftstyp:
-        
-        #  1. NORMALER TURM WIRD GEUPGRADET 
+        #normaler Turm upgraden
         if rasterFeld.landschaftstyp.name == "Turm":
             if spiel.spieler.muenzen >= 7:  
                 from turm import TurmLogik
@@ -219,7 +215,7 @@ def mouse_press_spiel(spiel: Spiel, x: int, y: int, res: Ressources):
                             turm.upgrade(turm2_typ.image)
                             break
 
-        #  2. ERDE: NORMALEN TURM KAUFEN
+        #normalen Turm kaufen
         elif rasterFeld.landschaftstyp.name == "Erde" and spiel.spieler.muenzen >= 4:
             turm_typ = next(x for x in spiel.landschaftstypen if x.name == "Turm")
             rasterFeld.landschaftstyp = turm_typ
